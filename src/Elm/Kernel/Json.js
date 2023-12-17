@@ -328,7 +328,11 @@ function _Json_runArrayDecoder(decoder, value, toElmValue)
 
 function _Json_isArray(value)
 {
-	return Array.isArray(value) || (typeof FileList !== 'undefined' && value instanceof FileList);
+	return Array.isArray(value)
+		|| (typeof FileList !== 'undefined' && value instanceof FileList)
+		|| (typeof TouchList !== 'undefined' && value instanceof TouchList)
+		|| (typeof HTMLCollection !== 'undefined' && value instanceof HTMLCollection)
+		|| (typeof NodeList !== 'undefined' && value instanceof NodeList);
 }
 
 function _Json_toElmArray(array)
@@ -380,7 +384,7 @@ function _Json_equality(x, y)
 			return x.__index === y.__index && _Json_equality(x.__decoder, y.__decoder);
 
 		case __1_MAP:
-			return x.__func === y.__func && _Json_listEquality(x.__decoders, y.__decoders);
+			return x.__func === y.__func && _Json_arrayEquality(x.__decoders, y.__decoders);
 
 		case __1_AND_THEN:
 			return x.__callback === y.__callback && _Json_equality(x.__decoder, y.__decoder);
@@ -390,7 +394,7 @@ function _Json_equality(x, y)
 	}
 }
 
-function _Json_listEquality(aDecoders, bDecoders)
+function _Json_arrayEquality(aDecoders, bDecoders)
 {
 	var len = aDecoders.length;
 	if (len !== bDecoders.length)
@@ -407,6 +411,29 @@ function _Json_listEquality(aDecoders, bDecoders)
 	return true;
 }
 
+function _Json_listEquality(aDecoders, bDecoders)
+{
+	var tempA = aDecoders;
+	var tempB = bDecoders;
+	while (tempA.b)
+	{
+		if (!tempB.b)
+		{
+			return false;
+		}
+		if (!_Json_equality(tempA.a, tempB.a))
+		{
+			return false;
+		}
+		tempA = tempA.b;
+		tempB = tempB.b;
+	}
+	if (tempB.b)
+	{
+		return false;
+	}
+	return true;
+}
 
 // ENCODE
 
