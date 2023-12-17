@@ -1,3 +1,8 @@
+*The fixes for this package come from the Elm Janitor project. We add some
+addiitional versioning.*
+
+See [https://github.com/elm-janitor/json](https://github.com/elm-janitor/json).
+
 # JSON in Elm
 
 This package helps you convert between Elm values and JSON values.
